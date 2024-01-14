@@ -166,6 +166,9 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 			case 32:
 				Vector3 Value;
 				break;
+			case 16:
+				VectorAnimH3 Value;
+				break;
 			default:
 				Assert(false);
 				break;
