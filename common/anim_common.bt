@@ -273,15 +273,31 @@ typedef struct
 				TRANSLATE       = 2739596730,
 				COLOR           = 1662570759,
                 
-                //IK
-                RIG_ROOT        = 3552837520,
+                		//IK
+                		RIG_ROOT        = 3552837520,
 
 				// MTAR
 				TensionController = 2275904709,
 				TensionShift = 2003538961,
 				TensionRate = 853304191,
 
-				// 
+				// PES
+				RIG_sk_root_hip = 968645950,
+		                RIG_dsk_hip = 3916153946,
+		                RIG_sk_thigh_l = 3373748779,
+		                RIG_sk_leg_l = 1585974686,
+		                RIG_sk_foot_l = 1612745210,
+		                RIG_sk_thigh_r = 2162694421,
+		                RIG_sk_leg_r = 2210302700,
+		                RIG_sk_foot_r = 1369424113,
+		                RIG_sk_belly = 3670138851,
+		                RIG_sk_chest = 2530987309,
+		                RIG_sk_neck = 3202087828,
+		                RIG_sk_head = 3889042814,
+		                RIG_sk_shoulder_l = 2593259726,
+		                RIG_sk_hand_l = 1611425788,
+		                RIG_sk_shoulder_r = 3310741819,
+		                RIG_sk_hand_r = 2750251121,
 			} Name;
             if (HeaderIndex==1)
             {
