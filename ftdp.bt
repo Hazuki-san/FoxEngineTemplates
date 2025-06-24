@@ -18,8 +18,8 @@ typedef struct
 	{
 		local uint SelfStartPos = FTell();
 		
-		WideVector3 BoundingBoxCorner;
-		WideVector3 BoundingBoxExtents;
+		Vector3W BoundingBoxCorner;
+		Vector3W BoundingBoxExtents;
 
 		float GridResolution;
 
@@ -99,7 +99,7 @@ typedef struct
 				Vector2 BoundingCellMinMax_X;
 				Vector2 BoundingCellMinMax_Z;
 
-				Vector4 VertexData[VertexCount] <bgcolor=COLOR_NODE>;
+				Vector4 VertexData[VertexCount] <bgcolor = COLOR_NODE>;
 
 				Vector4 UnknownData[4];
 			} Decal <bgcolor = COLOR_TERRAINDECAL>;

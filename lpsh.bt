@@ -7,7 +7,7 @@ typedef struct
 	half g;
 	half b;
 	half skyVisibility;
-} ShCoefficients <read = Str("(%s, %s, %s, %s)", Readhalf(r), Readhalf(g), Readhalf(b), Readhalf(skyVisibility))>;
+} ShCoefficients <read = Str("(%s, %s, %s, %s)", ReadHalf(r), ReadHalf(g), ReadHalf(b), ReadHalf(skyVisibility))>;
 
 typedef struct(int selfIndex)
 {
@@ -50,7 +50,7 @@ typedef struct
 	local uint numLightProbes = parentof(this).Parameter[GetFoxDataNodeParamIndex(parentof(this), "numLightProbes")].Value;
 
 	// Only in Version 4 files
-	local uint formatType = parentof(this).Parameter[GetFoxDataNodeParamIndex(parentof(this), "formatType")].Value; Assert(formatType == 1);
+	//local uint formatType = parentof(this).Parameter[GetFoxDataNodeParamIndex(parentof(this), "formatType")].Value; Assert(formatType == 1);
 
 	uint Times[numDiv] <hidden = true, optimize = true>;
 

@@ -66,9 +66,9 @@ struct BankHeader
 
 struct Object
 {
-	ObjectType objectType <bgcolor=0xffab00>;
+	ObjectType objectType <bgcolor = 0xffab00>;
 	int objectSize;
-	uint objectId <comment="FNV132 hash", bgcolor=0xabff00>;
+	uint objectId <comment="FNV132 hash", bgcolor = 0xabff00>;
 
 	// HWL for printing useful info at the console
 	printType(objectType);
@@ -86,7 +86,7 @@ struct Object
 			break;
 
 		case Sound:
-			SourceInfo sourceinfo;
+			SourceInfo sourceinfo <read=Str("%s %s, id: %u",EnumToString(this.embedOrStream),EnumToString(this.soundType),this.sourceID)>;
 			SoundStructure soundStructure <optimize=false>;
 			break;
 
@@ -95,7 +95,7 @@ struct Object
 			ActionType action_type;
 
 			printActionType(action_type);
-			uint id_of_game_obj_referenced_above <comment="This is zero if there is no game object." , bgcolor=0xD8C5EA>;
+			uint id_of_game_obj_referenced_above <comment="This is zero if there is no game object." , bgcolor = 0xD8C5EA>;
 			// Always zero, according to the wiki
 			ubyte unknown;
 			ubyte additional_params;
@@ -108,16 +108,21 @@ struct Object
 			}
 
 			// AkPropBundle<RANGED_MODIFIERS<AkPropValue>_>::SetInitialParams() 
-			ubyte propsCount;
-			if (propsCount > 0)
+			ubyte randomizerCount;
+			if (randomizerCount > 0)
 			{
-				ubyte unknowns[propsCount];
-				uint64 unknown64s[propsCount];
+				EventParameterType randomizerType[randomizerCount]; //randomized parameter type
+			    struct EventRandomizerMinMax
+			    {
+				    //SoundStrctureParameterType Parameter;
+				    uint min;
+				    uint max;
+			    } randomizerminmax[randomizerCount];
 			}
 
 			if (action_type == AkActionType_Play || action_type == AkActionType_PlayAndContinue)
 			{
-				ubyte unknown; // sets up some unknown flags again
+				ubyte curveType; // sets up some unknown flags again
 				uint fileID;
 			}
 			// Resume or pause action types
@@ -143,8 +148,8 @@ struct Object
 				// not sure if this is what it actually means
 				enum <ubyte> AbsoluteOrRelative
 				{
-					Relative,
-					Absolute
+					Relative=2,
+					Absolute=1
 				} absoluteorrelative;
 				float valueSetting;
 			}
@@ -194,7 +199,7 @@ struct Object
 			local int i;
 			for (i = 0; i < num_event_actions; ++i)
 			{
-				uint event_action_ID <bgcolor=0x66D1FF>;
+				uint event_action_ID <bgcolor = 0x66D1FF>;
 	
 				Printf("Event #");
 				Printf("%u", i);
@@ -207,22 +212,94 @@ struct Object
 		// as of v2.5
 		case SequenceContainer:
 			SoundStructure soundstructure;
+            short NoOfLoops;
+            ubyte unk2;
+            ubyte unk3;
+            short unknown;
+            float transitionDuration;
+            float transitionDuration_randomMin;
+            float transitionDuration_randomMax;
+            ushort avoidRepeatingLastCount;
+            enum <ubyte> ContainerTransitionType
+            {
+                CONTAINER_TRANSITION_NONE=0x0,    
+                CONTAINER_TRANSITION_Xfade_amp=0x1,    
+                CONTAINER_TRANSITION_Xfade_power=0x2,    
+                CONTAINER_TRANSITION_Delay=0x3,    
+                CONTAINER_TRANSITION_Sample_accurate=0x4,    
+                CONTAINER_TRANSITION_Trigger_rate=0x5,    
+            } transitionType;
+            enum <ubyte> ContainerRandomPlayType
+            {
+                CONTAINER_RANDOM_STANDARD=0x0,    
+                CONTAINER_RANDOM_SHUFFLE=0x1,
+            } randomPlayType;
+            enum <ubyte> ContainerPlayType
+            {
+                CONTAINER_RANDOM=0x0,    
+                CONTAINER_SEQUENCE=0x1,
+            } playType;
+            ubyte unknown6;
+            ubyte unknown7;
+            enum <ubyte> ContainerAtEndOfPlaylist
+            {
+                CONTAINER_END_Restart=0x0,
+                CONTAINER_END_Play_in_reverse_order=0x1, 
+            } atEndOfPlaylist;
+            ContainerPlayMode playMode;
+            enum <ubyte> ContainerScopeType
+            {
+                CONTAINER_SCOPE_GAMEOBJECT=0x0,    
+                CONTAINER_SCOPE_GLOBAL=0x1,
+            } scope;
+			uint childrenCount;
+			/*uint children[childrenCount];
+            ushort childPrioritiesCount;
+            struct ChildPriority{
+                uint childId;
+                int priority;    
+            } childPriority[childPrioritiesCount];*/
 			break;
 	
 		// as of v2.5
 		case SwitchContainer:
 			SoundStructure soundstructure;
+            uint isStateGroup;
+            uint groupName;
+            uint defaultStateName;
+            ContainerPlayMode playMode;
+			uint childrenCount;
+			uint children[childrenCount];
+            uint stateCount;
+            struct AssignedObjectsToState{
+                uint stateId;
+                uint assignedObjectsCount;   
+                uint assignedObjects[assignedObjectsCount]; 
+            } assignedObjectsToState[stateCount] <optimize=false>;
+			uint childrenCount;
+            struct ChildSwitchProperty
+            {
+                uint childId;
+                ubyte FirstOnly;
+                ubyte ContinueToPlay;
+                short unknown2; //1
+                short unknown3;
+                uint fadeOut;
+                uint fadeIn;
+            } childSwitchProperty[childrenCount];
 			break;
 
 		case ActorMixer: // HWL According to PS3 files. This is ugly.
 			SoundStructure soundstructure;
-			uint childrenCount;
-			uint children[childrenCount];
-
+            if (FTell()<startof(objectId)+objectSize)
+            {
+			    uint childrenCount;
+			    //uint children[childrenCount];
+            };
 			break;
 
 		case AudioBus:
-			uint parentObjectId <bgcolor=0xDED272>;
+			uint parentObjectId <bgcolor = 0xDED272>;
 
 			AudioBus_Parameters audiobus_parameters;
 
@@ -265,6 +342,8 @@ struct Object
 
 		case BlendContainer:
 			SoundStructure soundstructure;
+			uint childrenCount;
+			uint children[childrenCount];
 			break;
 
 		case DialogueEvent:
@@ -322,6 +401,9 @@ struct Object
 	
 			} dialogueEventObject;
 			break;
+            
+        case MotionFX:
+            break;
 
 		case MusicSegment:
 			SoundStructure soundstructure;
@@ -337,7 +419,7 @@ struct Object
 			uint count;
 			// there's a weird for loop for the count in the integration demo code, apparently there can
 			// be multiple sourceinfo objects??
-			SourceInfo sourceinfo[count];
+			SourceInfo sourceinfo[count] <read=Str("%s %s, id: %u",EnumToString(this.embedOrStream),EnumToString(this.soundType),this.sourceID)>;;
 
 			// i would've preferred to put this in another .bt file, but due to it using the soundstructure
 			// i can't
@@ -395,8 +477,8 @@ struct Object
 						AkMusicTrackRanSeqType_Normal,
 						AkMusicTrackRanSeqType_Random,
 						AkMusicTrackRanSeqType_Sequence
-					} random_seq_type <fgcolor=0xFF0000>;
-					uint musicTrackLookAheadTime <fgcolor=0xFF0000>; // later gets converted to samples, but first it is multiplied
+					} random_seq_type <fgcolor = 0xFF0000>;
+					uint musicTrackLookAheadTime <fgcolor = 0xFF0000>; // later gets converted to samples, but first it is multiplied
 																	// by CAkMusicRenderer::StreamingLookAheadRatio() 
 				}
 			} tracks;
@@ -440,7 +522,7 @@ struct Object
 			break;
 
 		case AuxillaryBus:
-			uint parentObjectId <bgcolor=0xDED272>;
+			uint parentObjectId <bgcolor = 0xDED272>;
 	
 			AudioBus_Parameters audiobus_parameters;
 
@@ -482,43 +564,159 @@ struct Object
 
 			break;
         case Attenuation:
-            /*local int startOfObject = FTell();
-            while (FTell()<startOfObject+objectSize)
+            //rlc IT WORKS
+            enum <byte> AttenCurveType
             {
-                struct AttenPoint
-                {
-                    uint attenType;
-                    float x;
-                    float y;
-                };
-                struct AttenGroup
-                {
-                    byte groupEntryCount;
-                    if (groupEntryCount<0)
+                AttenCurveTypeNone=-1,
+                AttenCurveTypeUseOutputBus=0,
+                AttenCurveTypeLinear=1,
+                AttenCurveTypeExponentialBase3=2,
+                AttenCurveTypeSineConstantPowerFadeOut=3,
+                AttenCurveTypeExponentialBase141=4,
+                AttenCurveTypeInvertedSCurve=5,
+                AttenCurveTypeConstant=6,
+                AttenCurveTypeSCurve=7,
+                AttenCurveTypeLogarithmicBase141=8,
+                AttenCurveTypeSineConstantPowerFadeIn=9,
+                AttenCurveTypeLogarithmicBase3=10,
+            };
+            local int startOfObject = FTell();
+            ubyte ConeAttenuation;
+            if (ConeAttenuation==1)
+            {
+                    float ConeAttenuationInnerAngle;
+                    float ConeAttenuationOuterAngle;
+                    float ConeAttenuationMaxAttenuation;
+                    float ConeAttenuationLowPassFilter;
+            };
+            ubyte unknown0;
+            AttenCurveType AuxiliarySendVolumesGameDefined;
+            AttenCurveType AuxiliarySendVolumesUserDefined;
+            AttenCurveType LowPassFilter;
+            AttenCurveType Spread;
+            AttenCurveType OutputBusVolume;
+            if (OutputBusVolume>0)
+            {
+                CurveDefinition OutputBusVolumeCurve;
+            };
+            if (AuxiliarySendVolumesGameDefined>0)
+            {
+                CurveDefinition AuxiliarySendVolumesGameDefinedCurve;
+            };
+            if (AuxiliarySendVolumesUserDefined>0)
+            {
+                CurveDefinition AuxiliarySendVolumesUserDefinedCurve;
+            };
+            if (LowPassFilter>0)
+            {
+                CurveDefinition LowPassFilterCurve;
+            };    
+            if (Spread>0)
+            {
+                CurveDefinition SpreadCurve;
+            };
+            RTPC rtpc;
+            break;
+        case Effect:
+        case Custom:
+            ubyte unknownFlags; //3
+            ubyte unknownFlags2;
+            enum <ushort> EffectPluginId
+            {
+                AkSilence=101,
+                AkDelay=106,
+                AkCompressor=108,
+                AkExpander=109,
+                AkPeakLimiter=110,
+                AkMatrixReverb=115,
+                SoundSeed_Air_SoundSeed_Wind=119,
+                AkFlanger=125,
+                AkGuitarDistortion=126,
+                AkConvolutionReverb=127,
+                AkHarmonizer=138,
+                AkGain=139,
+                MotionGenerator=405,
+            } effectPluginId;
+            ushort effectSettingsLength;
+            ushort unknown3;
+            
+            //effect settings
+            switch (effectPluginId)
+            {
+                case AkSilence:
+                    float Length;
+                    float LengthMin;
+                    float LengthMax;
+                    break;
+                case AkDelay:
+                    float DelayTime;
+                    float Feedback;
+                    float WetDryMix;
+                    float OutputLevel;
+                    ubyte EnableFeedback;
+                    ubyte ProcessLFE;
+                    break;
+                case AkConvolutionReverb:
+                    float PreDelay;
+                    float RearDelay;
+                    float FrontRearDelay;
+                    float StereoWidth;
+                    float InputCenterLevel;
+                    float InputLFELevel;
+                    float FrontLevel;
+                    float RearLevel;
+                    float CenterLevel;
+                    float LFELevel;
+                    float DryLevel;
+                    float WetLevel;
+                    break;
+                case AkMatrixReverb:
+                    float PreDelay;
+                    float ReverbTime;
+                    enum <uint> NumberOfDelays
                     {
-                        byte unknown20;
-                        byte unknown21;
+					    Favor_performance=4,
+					    Balance_quality_and_performance=8,
+					    Favor_quality=12,
+						Maximize_quality=16,
+                    } numberOfDelays;
+                    enum <uint> DelayLengthsMode
+                    {
+					    Default_delay_lengths=0,
+					    Custom_delay_lengths=1,
+                    } delayLengthsMode;
+                    float WetLevel;
+                    float DryLevel;
+                    ubyte ProcessLFE;
+                    break;
+                case SoundSeed_Air_SoundSeed_Wind:
+                    FSkip(effectSettingsLength);
+                    break;
+                case AkPeakLimiter:
+                    if (unknownFlags2==0)
+                    {
+                        float Threshold;
+                        float Ratio;
+                        float LookAheadTime;
+                        float Release;
+                        float OutputGain;
+                        byte ProcessLFE;
+                        byte ChannelLink;
                     }
-                    if (groupEntryCount>0)
+                    else if (unknownFlags2==16)
                     {
-                        short something;
-                        float xGr;
-                        float yGr;
-                        AttenPoint attenPoints[something-1] <optimize=false>;
-                        uint unknown15;
-                    }
-                };
-                struct AttenGroupGroup
-                {
-                    byte attencount3;
-                    if (attencount3>0)
-                    {
-                        AttenGroup attenGroups[attencount3] <optimize=false>;
                         
-                    }
-                };
-                AttenGroupGroup attenGroup1 <optimize=false>;
-            };*/
+                    };
+                    break;
+                default:
+                    FSkip(effectSettingsLength);
+                    break;
+            };
+            
+            //byte embeddedSoundCount;
+            //uint embeddedSoundId[embeddedSoundCount];
+            //RTPC rtpc;
+            
             break;
 	}
 
@@ -540,7 +738,7 @@ struct Hierarchy
 	// reused in other structures...
 	for (curObj = 0; curObj < objectCount; ++curObj)
 	{
-		Object object <optimize=false>;
+		Object object <optimize=false, read=Str("%s, id: %u", EnumToString(this.objectType), this.objectId)>;
 	
 		// HWL it's +5 since there always appears to be 5 empty
 		// bytes between every object.
@@ -620,23 +818,29 @@ struct DataIndex
 		int size;
 	
 	} embeddedWemDefiniton[offsetsSize / 12];
-	// DATA + garbage4bytes only appears if the definitions don't end up with an aligned stream????
-	if (FTell() % 16 != 0)
-		FSkip(16 - (FTell() % 16));
+    
+    char sign[4];
+    uint sizeOfData;
 
-	local int index = 0;
-	local int startOfArray = FTell();
-	struct RiffEmbed
-	{
-		// ok seems to be inconsistent between GZ, TPP and SBP_Tool output as to whether it wants to align te stream
-		// so this might leave the riff files with empty bytes at the start
-		FSkip( (startOfArray+embeddedWemDefiniton[index].offsetToStart) - FTell() );
-	
-		char riffData[embeddedWemDefiniton[index].size];
-	
-		index += 1;
-	
-	} riffEmbed[offsetsSize / 12] <optimize=false>;
+    struct EmbeddedData
+    {
+	    if (FTell() % 16 != 0)
+		    FSkip(16 - (FTell() % 16));
+    
+	    local int index = 0;
+	    local int startOfArray = FTell();
+	    struct RiffEmbed
+	    {
+		    // ok seems to be inconsistent between GZ, TPP and SBP_Tool output as to whether it wants to align te stream
+		    // so this might leave the riff files with empty bytes at the start
+		    FSkip( (startOfArray+embeddedWemDefiniton[index].offsetToStart) - FTell() );
+	    
+		    char riffData[embeddedWemDefiniton[index].size];
+	    
+		    index += 1;
+	    
+	    } riffEmbed[offsetsSize / 12] <optimize=false>;
+    } embeddedData;
 };
 
 // STMG is found only in Init.bnk, and contains useful information about project settings as well as the Switch Groups,
@@ -762,7 +966,7 @@ struct SoundBankHeader
 
 if (has_soundbankheader == 1)
 {
-	SoundBankHeader soundBankHeader <bgcolor=soundBankHeader_color>;
+	SoundBankHeader soundBankHeader <bgcolor = soundBankHeader_color>;
 
 	if (FTell() % 16 != 0)
 	FSkip(16 - (FTell() % 16));
@@ -778,19 +982,23 @@ struct Section0 {
 	switch (sign)
 	{
 		case "BKHD":
-			BankHeader bankHeader <bgcolor=BankHeader_color, comment="Bank Header">;
+			BankHeader bankHeader <bgcolor = BankHeader_color, comment="Bank Header">;
 			break;
 		case "HIRC":
-			Hierarchy hierarchy <bgcolor=Hierarchy_color, comment="Object Hierarchy">;
+			Hierarchy hierarchy <bgcolor = Hierarchy_color, comment="Object Hierarchy">;
 			break;
 		case "STID":
-			StreamId streamId <bgcolor=StreamId_color, comment="Stream Ids">;
+			StreamId streamId <bgcolor = StreamId_color, comment="Stream Ids">;
 			break;
 		case "DIDX":
-			DataIndex dataIndex <bgcolor=DataIndex_color, comment="Embedded .wem sounds">;
+			DataIndex dataIndex <bgcolor = DataIndex_color, comment="Embedded .wem sounds">;
 			break;
 		case "STMG":
-			STMG_struct stmg <bgcolor=STMG_color, comment="Found only in Init.bnk">;
+			STMG_struct stmg <bgcolor = STMG_color, comment="Found only in Init.bnk">;
+			break;
+		case "ENVS":
+            uint length;
+			char envs[length] <comment="Found only in Init.bnk">;
 			break;
 		default:
 			Assert(2+2==5,"Unknown section!!!!!");
@@ -824,7 +1032,7 @@ struct Sections
 		endOfStp = soundBankHeader.sectionDefinition[currentSection].sectionSize;
 		struct Section2
 		{
-			StreamedPackage streamedPackage <bgcolor=StreamId_color, comment="Streamed .wem sounds">;
+			StreamedPackage streamedPackage <bgcolor = StreamId_color, comment="Streamed .wem sounds">;
 
 		} section2;
 	};

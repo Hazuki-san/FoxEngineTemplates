@@ -19,8 +19,8 @@ typedef struct
 	{
 		local uint SelfStartPos = FTell();
 		
-		WideVector3 BoundingBoxCorner;
-		WideVector3 BoundingBoxExtents;
+		Vector3W BoundingBoxCorner;
+		Vector3W BoundingBoxExtents;
 
 		float GridResolution;
 
@@ -115,7 +115,7 @@ typedef struct
 				    {
 				        Vector3 Position;
 				        GEO_NODE_TAGS Tags;
-				    } Points [highestNodeIndex + 1] <bgcolor=COLOR_NODE>;
+				    } Points [highestNodeIndex + 1] <bgcolor = COLOR_NODE>;
 				}
 			} Shape <bgcolor = COLOR_GEOSHAPE>;
 		}

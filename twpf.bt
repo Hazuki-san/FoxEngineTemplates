@@ -2,6 +2,223 @@
 * Note: The tags seem to be referenced in TppRequestWeatherTagTrapExecDataElement entities in fox2
 */
 
+#include "common/common.bt"
+
+enum <ushort> WeatherType
+{
+    SUNNY=0,
+    CLOUDY=1,
+    RAINY=2,
+    SANDSTORM=3,
+    FOGGY=4,
+    POURING=5,
+};
+
+enum <ushort> WeatherParamGroupName
+{
+    TppGlobalVolumetricFog=1,
+    TppAtmosphere_TppSky=2,
+    GrPluginSettings=3,
+    ColorCorrection=4,
+    LineSSAOParameters=5,
+    WeatherParameters=7,
+    NoiseEnvelopeGenerator=8,
+    LocalReflectionSettings=9,
+    GenerativeClouds=10,
+};
+
+enum <ushort> ParamName 
+{
+    //TppGlobalVolumetricFog
+    TppGlobalVolumetricFog_density=257,
+    TppGlobalVolumetricFog_color=258,
+    TppGlobalVolumetricFog_GZ_albedo=259,//only other color after color
+    TppGlobalVolumetricFog_luminance=260,
+    TppGlobalVolumetricFog_GZ_height=261,//135 in pouring, like gntn_nightRain_sky
+    TppGlobalVolumetricFog_nearDistance=262,
+    TppGlobalVolumetricFog_GZ_bottom=263,//0 except ombs which is -10 in e20015_sky
+    TppGlobalVolumetricFog_skyAlbedo=264,
+    TppGlobalVolumetricFog_rayleighScattering=265,
+    TppGlobalVolumetricFog_mieScattering=266,
+    TppGlobalVolumetricFog_falloff=267,
+    TppGlobalVolumetricFog_mieAnisotropy=268,
+    TppGlobalVolumetricFog_exposureOffset0=269,
+    TppGlobalVolumetricFog_exposureOffset0_Ev=270,
+    TppGlobalVolumetricFog_exposureOffset1=271,
+    TppGlobalVolumetricFog_exposureOffset1_Ev=272,
+    TppGlobalVolumetricFog_exposureOffset2=273,
+    TppGlobalVolumetricFog_exposureOffset2_Ev=274,
+    TppGlobalVolumetricFog_power=275,
+    TppGlobalVolumetricFog_fogDirLightGain=276,
+    TppGlobalVolumetricFog_density_noise0_ratio=277,
+    TppGlobalVolumetricFog_density_envelope0_add=278,
+    // TppAtmosphere
+    TppAtmosphere_GZ_mieAnisotropy=513,//twpfs go from 0.2 at night to 1 in day, datasets do 0.8 and ofCloudySky 0.2
+    TppAtmosphere_daySkyAmbientScale=514, //0 in avatar_space and low in volginride, 0.5 in nonsunny
+    TppAtmosphere_nightSkyAmbientScale=515,
+    TppAtmosphere_starLight=516,
+    TppAtmosphere_cloudiness=517,
+    TppAtmosphere_skyColorSunScale=518,
+    TppAtmosphere_skyLightSunScale=519,
+    //520 0 at most times, 7 at midnight cloudy, 4.5 at midnight rainy, 0 in title
+    TppAtmosphere_shadowMaskSpecular=521,
+    TppAtmosphere_shadowRange=522,
+    TppAtmosphere_shadowRangeExtra=523,
+    TppAtmosphere_hiResShadowRange=524,
+    TppAtmosphere_shadowProjectionRange=525,
+    TppAtmosphere_shadowfadeRange=526,
+    TppAtmosphere_selfShadowBias=527,
+    TppAtmosphere_shadowRangeLimit=528,
+    TppAtmosphere_shadowRangeFoculLengthConnectionScale=529,
+    TppAtmosphere_influenceOfFog=530,
+    
+    TppAtmosphere_dirLightFadeStart=549,
+    TppAtmosphere_dirLightFadeLength=550,
+    TppAtmosphere_dirLightFadeEnable=551,
+    TppAtmosphere_fogFalloff=552,
+    TppAtmosphere_fogFalloffStart=553,
+    
+    TppAtmosphere_followCameraEnable=556,
+    TppAtmosphere_offsetPosY=557,
+    TppAtmosphere_skyColor=558,
+    TppAtmosphere_skyEnable=559, //cypr group_photo is 0, but cypr default and other uses is 1
+    TppAtmosphere_enviromentSpecular_ShScale0=560,
+    TppAtmosphere_enviromentSpecular_ShScale0_Ev=561,
+    TppAtmosphere_enviromentSpecular_ShScale1=562,
+    TppAtmosphere_enviromentSpecular_ShScale1_Ev=563,
+    TppAtmosphere_enviromentSpecular_ShScale2=564,
+    TppAtmosphere_enviromentSpecular_ShScale2_Ev=565,
+    TppAtmosphere_enviromentSpecular_minFrontReflectionRate=566,
+    TppAtmosphere_enviromentSpecular_Color=567,
+    TppAtmosphere_enableSteppedMoveOfDirectionalLight=568,
+    TppAtmosphere_divisionNumOfSteppedMove=569,
+    TppAtmosphere_interpolateTimeInSecond=570,
+            
+    TppAtmosphere_starLuminanceScale=576,
+    TppAtmosphere_skyLightSunScaleOcean=577,
+    TppAtmosphere_influenceOfFogMin=578,
+
+    //TppSky
+    TppSky_diffusion=641,
+    TppSky_cloudDensity=642,
+    TppSky_dirLightGain=643,
+    TppSky_inCloudScatterGain=644,
+    TppSky_ambLightGain=645,
+    TppSky_cylCloudDensity=646,
+    TppSky_cylBackScatGain=647,
+    TppSky_cylFrontDirGain=648,
+    TppSky_cylFrontAmbGain=649,
+    TppSky_cloudInfluenceOfFog=650,
+    TppSky_cloudFogFalloff=651,
+    TppSky_cloudFogFalloffStart=652,
+    TppSky_dom2Density=653,
+    TppSky_dom3Density=654,
+    TppSky_cloudDensityMax=655,
+    TppSky_dom2DensityMax=656,
+    TppSky_dom3DensityMax=657,
+    TppSky_cylCloudDensityMax=658,
+    TppSky_cloudInfluenceOfFogMin=659,  
+    
+    //GrPluginSettings
+    GrPluginSettings_minExposure=769,
+    GrPluginSettings_maxExposure=770,
+    //771 key value in gz?
+    GrPluginSettings_exposureCompensation=772,
+    
+    GrPluginSettings_bloomSize=775,
+    GrPluginSettings_shutterSpeed=776,
+    GrPluginSettings_keyValue=777,
+    
+    GrPluginSettings_addExpComp0=782,
+    GrPluginSettings_addExpComp0_Ev=783,
+    GrPluginSettings_addExpComp1=784,
+    GrPluginSettings_addExpComp1_Ev=785,
+    GrPluginSettings_addExpComp2=786,
+    GrPluginSettings_addExpComp2_Ev=787,
+    GrPluginSettings_bloomBrightnessExtraction=788,
+    GrPluginSettings_bloomWeight=789,
+    GrPluginSettings_ghostStrength=790,
+    GrPluginSettings_ghostScreenScale=791,
+    
+    //ColorCorrection
+    ColorCorrection_colorScale=1025,
+    ColorCorrection_startSlope=1027,
+    ColorCorrection_endSlope=1028,
+    ColorCorrection_lut=1030,
+    ColorCorrection_exposureThreshold=1031,
+    ColorCorrection_colorScale2=1032,
+    ColorCorrection_startSlope2=1033,
+    ColorCorrection_endSlope2=1034,
+    ColorCorrection_lut2=1035,
+    ColorCorrection_exposureThreshold2=1036,
+    
+    //LineSSAOParameters
+    LineSSAOParameters_innerRadius=1281,
+    LineSSAOParameters_outerRadius=1282,
+    LineSSAOParameters_maxDistanceInner=1283,
+    LineSSAOParameters_maxDistanceOuter=1284,
+    LineSSAOParameters_GZ_contrast=1285,
+    LineSSAOParameters_blurRadius=1286,
+    LineSSAOParameters_falloffStart=1287,
+    LineSSAOParameters_falloffRange=1288,
+    LineSSAOParameters_gainonStart=1289,
+    LineSSAOParameters_gainonRange=1290,
+    LineSSAOParameters_contrastLow=1291,
+    LineSSAOParameters_contrastHigh=1292,
+    LineSSAOParameters_maxDistanceThresholdInner=1293,
+    LineSSAOParameters_maxDistanceThresholdOuter=1294,
+    
+    //WeatherParameters
+    WeatherParameters_raininess=1793,//1793 Float - rain strength (RAINY always 1, in gntn RAINY is 0.5 and POURING is 1, other weathers 0)
+    WeatherParameters_windSpeed=1794,
+    WeatherParameters_speedTurbulentRate=1795,
+    WeatherParameters_speedTurbulentCycle=1796,
+    
+    //NoiseEnvelopeGenerator
+    NoiseEnvelopeGenerator_envelopeAttackTime=2049,
+    NoiseEnvelopeGenerator_envelopeDecayTime=2050,
+    NoiseEnvelopeGenerator_noiseRate=2051,
+        
+    //LocalReflectionSettings
+    LocalReflectionSettings_effectScale=2305,
+    LocalReflectionSettings_roughnessBias=2306,
+    LocalReflectionSettings_rayStepScale=2307,
+    LocalReflectionSettings_rayCount=2308,
+    LocalReflectionSettings_shaderType=2309,
+    LocalReflectionSettings_fade=2310,
+    LocalReflectionSettings_mask=2311,
+    
+    //GenerativeClouds
+    GenerativeClouds_gcEnable=2561,
+    GenerativeClouds_gcDensity=2562,
+    GenerativeClouds_gcDensityMax=2563,
+    GenerativeClouds_gcScattering=2564,
+    GenerativeClouds_gcAbsorption=2565,
+    GenerativeClouds_gcMieAnisotropy=2566,
+    GenerativeClouds_gcDirLightGain=2567,
+    GenerativeClouds_gcSkyLightGain=2568,
+    GenerativeClouds_gcRayMarchDepth=2569,
+    GenerativeClouds_gcExponent0=2570,
+    GenerativeClouds_gcExponent0Max=2571,
+    GenerativeClouds_gcExponent1=2572,
+    GenerativeClouds_gcExponent1Max=2573,
+};
+
+typedef struct
+{
+	float r;
+	float g;
+	float b;
+} Color <read = Str("(%g, %g, %g)", r, g, b)>;
+
+enum<ubyte> ParamType
+{
+    Float = 1,
+    RGB = 2,
+    Path = 3,   //Unused
+    String = 4  //LUT
+};
+
 string ReadUInt24HTimeTwpf(uint time)
 {
 	//hhttps://github.com/youarebritish/TwpfTool/blob/master/TwpfTool/SpreadsheetBuilder.cs
@@ -16,252 +233,125 @@ struct Header
 {
     char format[7];
     byte version;
-    int magicNumber1;
+    int headerSize; Assert(headerSize==FTell());
+} header <bgcolor = 0x6741DA>;
 
-    Assert(magicNumber1 == 12);
-
-    int section1EntryCount;
-    int tagCount;
-
-    int section1EntryOffsets[section1EntryCount - 1];
-    ushort fogSettingsEntryCount;
-    ushort magicNumber2;
-    Assert(magicNumber2 == 1);
-
-    uint fogSettingsEntryOffsets[fogSettingsEntryCount];
-} header <bgcolor=0x6741DA>;
-
-struct Color
+struct WeatherParameterGroups
 {
-    float r;
-    float g;
-    float b;
-};
+    int totalWeatherParamGroupCount;
+    //int tagCount;//rlc THERE IS NO TAG COUNT
 
-enum<ubyte> ColorMode
-{
-    Alpha = 1,
-    RGB = 2,
-    Unknown = 3,
-    LUT = 4
-};
+    int weatherParamGroupsOffsets[totalWeatherParamGroupCount];
+    //rlc guess first position is assumed to be here
+} offsets <bgcolor = 0xBAB366>;
 
-// Defines fog strength curves.
-struct TppGlobalVolumetricFog
+local int tagCount <hidden=true>;
+tagCount=0;
+
+struct WeatherParameterGroup
 {
-    struct FogSettings
+	ushort entryCount <hidden=true>;
+
+	// Might specify the type of the struct (cross-reference across files)
+	// Yep, across TPP files, this seems to hold
+	// What confuses me though is that there are often two entries of value 2
+	// Maybe this should be taken as a uint and you merely extract the count from it
+	WeatherParamGroupName groupName;
+
+	uint entryOffsets[entryCount] <hidden=true>;
+
+	// Each entry is linked to a parameter (e.g., shadowRange) and contains curves for tags
+	struct WeatherParamTagGroup
     {
-        ubyte entryCount;
-        ColorMode fogColorMode;    
-        ushort parameterEnum;
-    
-        uint entryOffsets[entryCount];
-    
-        struct TagFogSettings
+		ubyte entryCount <hidden=true>;
+		ParamType type;
+        ParamName name;
+			
+		uint entryOffsets[entryCount] <hidden=true>;
+			
+		struct WeatherParameterTag
         {
-            uint tagOffset <fgcolor=0xFFFFFF>;
-            ubyte numFogCurves;
-            ushort tagIndex;
-
-            ubyte padding <hidden=true>;
-            Assert(padding == 0);
-
-            uint fogCurveOffsets[numFogCurves] <optimize=false>;
-    
-            struct FogCurves
+			uint tagOffset <fgcolor = 0xFFFFFF, hidden=true>;
+			ubyte curveCount <hidden=true>;
+			ushort tagIndex <hidden=true>; if (tagIndex>=tagCount) {tagCount=tagIndex+1;}
+	
+			ubyte padding <hidden=true>; Assert(padding == 0);
+	
+			uint curveOffsets[curveCount] <optimize=false, hidden=true>;
+			
+			struct WeatherParameterCurve
             {
-                ushort weatherId;
-                ushort numCurveValues;
-    
-                uint curveValueOffsets[numCurveValues] <optimize=false>;
-    
-                struct FogCurveValue
+				WeatherType weatherType;
+				ushort numCurveValues <hidden=true>;
+			
+				uint curveValueOffsets[numCurveValues] <optimize=false, hidden=true>;
+			
+				struct WeatherParameterCurveKey
                 {
-                    uint time <read=ReadUInt24HTimeTwpf(this)>;
+					uint time <read=ReadUInt24HTimeTwpf(this)>;
+	
+					switch(type)
+					{
+						case Float:
+							float value;
+							break;
+						case RGB:
+							Color value;
+							break;
+						case Path:
+							PathCode64 value;
+                            break;
+						case String:
+							StrCode value;
+							break;
+						default:
+							Assert(false);
+							break;
+					}
+				} weatherParamCurveKey[numCurveValues] <read=ReadKey(this), optimize=false>;
+			} weatherParamCurve[curveCount] <read=EnumToString(weatherType), optimize=false>;
+		} weatherParamTag[entryCount] <name=GetTag, read=GetTag, optimize=false>;
+	} WeatherParameterTagGroup[entryCount] <read=Str("%s, %s", EnumToString(type), EnumToString(name)), optimize=false>;
+} weatherParamGroup[offsets.totalWeatherParamGroupCount] <read=EnumToString(groupName), bgcolor = 0x533717, optimize=false>;
 
-                    if (fogColorMode == RGB)
-                    {
-                        Color color;
-                    }
-                    else
-                    {
-                        float strength;
-                    }
-                } fogCurveValue[numCurveValues] <optimize=false>;
-            } fogCurves[numFogCurves] <optimize=false>;
-        } tagFogSettings[entryCount] <name=GetTag, comment=GetTag, optimize=false>;
-    } fogSettings[header.fogSettingsEntryCount] <bgcolor=0xBAB366, optimize=false>;
-} tppGlobalVolumetricFog;
+string ReadKey(WeatherParameterCurveKey &key)
+{
+    local string str=Str("%s, ", ReadUInt24HTimeTwpf(key.time));
+	switch(parentof(parentof(parentof(key))).type)
+	{
+		case Float:
+			str+=Str("%g", key.value);
+			break;
+		case RGB:
+			str+=Str("(%g, %g, %g)", key.value.r, key.value.g, key.value.b);
+			break;
+		case Path:
+			str+=Str("%I64u", key.value.hash);
+			break;
+		case String:
+			str+=Str("%I64u", key.value.hash);
+			break;
+		}
+    return str;
+};
 
-string GetTag(TagFogSettings &entry)
+
+string GetTag(WeatherParameterTag &entry)
 {
     local int position = FTell();
     string tag = ReadString(entry.tagOffset);
     FSeek(position);
     return tag;
-}
-
-struct Section1
-{
-    struct ParameterChunk
-    {
-        ushort entryCount;
-    
-        // Might specify the type of the struct (cross-reference across files)
-        // Yep, across TPP files, this seems to hold
-        // What confuses me though is that there are often two entries of value 2
-        // Maybe this should be taken as a uint and you merely extract the count from it
-        ushort maybeAnEnum;
-    
-        uint entryOffsets[entryCount];
-    
-        // Each entry is linked to a parameter (e.g., shadowRange) and contains curves for tags
-        struct Section1Entry
-        {
-            ubyte numDefinitions;
-            ColorMode colorMode;
-
-            // Probably a parameter enum
-            // TppAtmosphere
-            // 2 is TppAtmosphere.daySkyAmbientScale or skyEnable
-
-            // 4 is TppAtmosphere.starLight
-            // 5 is ???
-            // 6 is TppAtmosphere.skyColorSunScale
-            // 7 is either skyLightSunScale or skyLightSunScaleOcean
-
-            // 9 is ???
-            // 10 is TppAtmosphere.shadowRange
-            // 11 is TppAtmosphere.shadowRangeExtra
-            // 12 is TppAtmosphere.hiResShadowRange
-            // 13 is TppAtmosphere.shadowProjectionRange
-            // 14 is TppAtmosphere.shadowfadeRange
-            // 15 is TppAtmosphere.selfShadowBias
-            // 16 is TppAtmosphere.shadowRangeLimit
-            // 17 is TppAtmosphere.shadowRangeFocalLengthConnectionScale
-            // 18 is either TppAtmosphere.influenceOfFog or TppAtmosphere.fogFalloff
-
-            // 37 is TppAtmosphere.dirLightFadeStart
-            // 38 is TppAtmosphere.dirLightFadeLength
-            // 39 is TppAtmosphere.dirLightFadeEnable
-
-            // 40 is TppAtmosphere.fogFalloff
-            // 41 is TppAtmosphere.fogFalloffStart
-
-            // 44 is ??? (followCameraEnable?)
-            // 45 is TppAtmosphere.offsetPosY
-            // 46 is TppAtmosphere.skyColor
-            // 47 is TppAtmosphere.daySkyAmbientScale or skyEnable
-
-            // 48 is TppAtmosphere.environmentSpecular_ShScale0
-            // 49 is TppAtmosphere.environmentSpecular_ShScale0_Ev
-            // 50 is TppAtmosphere.environmentSpecular_ShScale1
-            // 49 is TppAtmosphere.environmentSpecular_ShScale1_Ev
-            // 52 is TppAtmosphere.environmentSpecular_ShScale2
-            // 53 is TppAtmosphere.environmentSpecular_ShScale2_Ev
-            // 54 is TppAtmosphere.environmentSpecular_minFrontReflectionRate
-            // 55 is TppAtmosphere.environmentSpecular_Color
-            // 56 is ???
-            // 57 is TppAtmosphere.divisionNumOfSteppedMove
-            // 58 is ???
-
-            // 64 is TppAtmosphere.starLuminanceScale
-            // 65 is TppAtmosphere.skyLightSunScale or skyLightSunScaleOcean
-            // 66 is ???
-
-            // ---
-            // TppSky
-            // ---
-            // 129 is TppSky.diffusion
-            // 130 is TppSky.cloudDensity
-            // 131 is TppSky.dirLightGain
-            // 132 is TppSky.inCloudScatterGain
-            // 133 is TppSky.ambLightGain
-            // 134 is TppSky.cylCloudDensity
-            // 135 is TppSky.cylBackScatGain
-            // 136 is TppSky.cylFrontDirGain
-            // 137 is TppSky.cylfrontAmbGain
-
-            // 141 is TppSky.dom2Density
-            // 142 is TppSky.dom3Density
-
-            // etc
-
-            // ---
-            // GrPluginSettings
-            // ---
-            // 1 is GrPluginSettings.minExposure
-            // 2 is GrPluginSettings.maxExposure
-            // 3 is GrPluginSettings.keyValue
-            // etc
-
-
-            // ---
-            // ColorCorrection
-            // ---
-            // 1 is ColorCorrection.colorScale
-            // 8 is ColorCorrection.colorScale2
-            // etc
-
-            ushort parameterEnum;
-            uint definitionOffsets[numDefinitions] <optimize=false>;
-    
-            struct Section1Subentry
-            {
-                uint tagOffset <fgcolor=0xFFFFFF>;
-    
-                ubyte numWeathers;
-                ushort tagIndex;
-
-                ubyte padding <hidden=true>;
-                Assert(padding == 0);
-
-                uint subsubEntryOffsets[numWeathers];
-    
-                struct ColorScale
-                {
-                    ushort weatherId;
-                    ushort numValues;
-                    uint curveValueOffsets[numValues];   
- 
-                    struct CurveValue
-                    {
-                        uint time <read=ReadUInt24HTimeTwpf(this)>;
-    
-                        if (colorMode == RGB)
-                        {
-                            // These can exceed 1.0!
-                            Color color;
-                        }
-                        else if (colorMode == Alpha)
-                        {
-                            // Values range from 0-1000.
-                            float strength;
-                        }
-                        else if (colorMode == LUT)
-                        {
-                            uint64 lutHash;
-                        }
-                        else
-                        {
-                            Assert(false);
-                        }
-                    } values[numValues] <optimize=false>;
-                } colorScales[numWeathers] <optimize=false>;
-            } definitions[numDefinitions] <name=GetTag1, optimize=false>;
-        } entries[entryCount] <optimize=false>;
-    } parameterChunks[header.section1EntryCount - 1] <bgcolor=0x533717, optimize=false>;
-} section1;
-
-string GetTag1(Section1Subentry &entry)
-{
-    local int position = FTell();
-    string tag = ReadString(entry.tagOffset);
-    FSeek(position);
-    return tag;
-}
-
+};
 
 // NOTE
 // The footer names are called "tags"
 // And are called like: WeatherManager.RequestTag("sortie_space", 0 )
+
+struct Tags
+{
+        struct Tag
+        {
+            char tagName[];
+        } tag[tagCount] <optimize=false>;
+}tags;

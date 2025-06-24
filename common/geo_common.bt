@@ -118,105 +118,120 @@ typedef struct
 	uint GEO_NODE_TAGS_EludeToElude : 1;
 } GEO_NODE_TAGS <bgcolor = COLOR_BG_TAGS, fgcolor = COLOR_FG_TAGS>;
 
-// From the exe we have to place: CHARA and RECOIL. The first could be CHARA. From JinMar's testing, it seems like MGS4_TYPRECOIL could be RECOIL?
 typedef struct
 {
-	uint64 GEO_COL_A_MAYBE_NONE : 1; if (GEO_COL_A_MAYBE_NONE) Printf("GEO_COL_A_MAYBE_NONE set.\n");
-	uint64 GEO_COL_A_MGS4_TYPRECOIL : 1; if (GEO_COL_A_MGS4_TYPRECOIL) Printf("GEO_COL_A_MGS4_TYPRECOIL set.\n");
-	uint64 GEO_COL_A_MGS4_TYPFLOOR : 1; if (GEO_COL_A_MGS4_TYPFLOOR) Printf("GEO_COL_A_MGS4_TYPFLOOR set.\n");
-	uint64 GEO_COL_A_MGS4_SOUND : 1; if (GEO_COL_A_MGS4_SOUND) Printf("GEO_COL_A_MGS4_SOUND set.\n");
+	uint64 Padding0 : 1 <hidden = true>; Assert(Padding0 == 0);
+	uint64 RECOIL : 1; // (MGS4) TYPRECOIL
+	uint64 CHARA : 1; // (TPP) 0x80000004 CHARA, (MGS4) 0x4 TYPFLOOR
+	uint64 SOUND : 1;
 
-	uint64 GEO_COL_A_PLAYER : 1;
-	uint64 GEO_COL_A_ENEMY : 1;
-	uint64 GEO_COL_A_BULLET : 1;
-	uint64 GEO_COL_A_MISSILE : 1;
+	uint64 PLAYER : 1;
+	uint64 ENEMY : 1;
+	uint64 BULLET : 1;
+	uint64 MISSILE : 1;
 
-	uint64 GEO_COL_A_BOMB : 1;
-	uint64 GEO_COL_A_MGS4_RADOR : 1; Assert(GEO_COL_A_MGS4_RADOR == 0);
-	uint64 GEO_COL_A_BLOOD : 1;
-	uint64 GEO_COL_A_IK : 1;
+	uint64 BOMB : 1;
+	uint64 RADOR_MGS4 : 1 <hidden = true>; Assert(RADOR_MGS4 == 0); // (MGS4)
+	uint64 BLOOD : 1;
+	uint64 IK : 1;
 
-	uint64 GEO_COL_A_STAIRWAY : 1;
-	uint64 GEO_COL_A_STOP_EYE : 1;
-	uint64 GEO_COL_A_CLIFF : 1;
-	uint64 GEO_COL_A_MGS4_TYPTHROUGH : 1; Assert(GEO_COL_A_MGS4_TYPTHROUGH == 0);
+	uint64 STAIRWAY : 1;
+	uint64 STOP_EYE : 1;
+	uint64 CLIFF : 1;
+	uint64 TYPTHROUGH_MGS4 : 1 <hidden = true>; Assert(TYPTHROUGH_MGS4 == 0); // (MGS4)
 
-	uint64 GEO_COL_A_MGS4_LEAN : 1; Assert(GEO_COL_A_MGS4_LEAN == 0);
-	uint64 GEO_COL_A_DONT_FALL : 1;
-	uint64 GEO_COL_A_CAMERA : 1;
-	uint64 GEO_COL_A_MGS4_SHADOW : 1; Assert(GEO_COL_A_MGS4_SHADOW == 0);
+	uint64 LEAN_MGS4 : 1 <hidden = true>; Assert(LEAN_MGS4 == 0); // (MGS4)
+	uint64 DONT_FALL : 1;
+	uint64 CAMERA : 1;
+	uint64 SHADOW_MGS4 : 1 <hidden = true>; Assert(SHADOW_MGS4 == 0); // (MGS4)
 
-	uint64 GEO_COL_A_MGS4_INTRUDE : 1; Assert(GEO_COL_A_MGS4_INTRUDE == 0);
-	uint64 GEO_COL_A_MGS4_ATTACK_GUARD : 1; Assert(GEO_COL_A_MGS4_ATTACK_GUARD == 0);
-	uint64 GEO_COL_A_CLIFF_FLOOR : 1;
-	uint64 GEO_COL_A_BULLET_MARK : 1;
+	uint64 INTRUDE_MGS4 : 1 <hidden = true>; Assert(INTRUDE_MGS4 == 0); // (MGS4)
+	uint64 ATTACK_GUARD_MGS4 : 1 <hidden = true>; Assert(ATTACK_GUARD_MGS4 == 0); // (MGS4)
+	uint64 CLIFF_FLOOR : 1;
+	uint64 BULLET_MARK : 1;
 
-	uint64 GEO_COL_A_HEIGHT_LIMIT : 1;
-	uint64 GEO_COL_A_DOUBLE_SLIDE : 1;
-	uint64 GEO_COL_A_WATER_SURFACE : 1;
-	uint64 GEO_COL_A_TARGET_BLOCK : 1;
+	uint64 HEIGHT_LIMIT : 1;
+	uint64 NO_BEHIND_MGS4 : 1 <hidden = true>; Assert(NO_BEHIND_MGS4 == 0); // (MGS4)
+	uint64 BEHIND_THROUGH_MGS4 : 1 <hidden = true>; Assert(BEHIND_THROUGH_MGS4 == 0); // (MGS4)
+	uint64 Padding1 : 1 <hidden = true>; Assert(Padding1 == 0);
 
-	uint64 GEO_COL_A_DOG : 1;
-	uint64 GEO_COL_A_NO_EFFECT : 1;
-	uint64 GEO_COL_A_EVENT_PHYSICS : 1;
-	uint64 GEO_COL_A_NO_WALL_MOVE : 1;
+	uint64 Padding2 : 1 <hidden = true>; Assert(Padding2 == 0);
+	uint64 DOUBLE_SIDE : 1;
+	uint64 WATER_SURFACE : 1;
+	uint64 CHARA_Part2 : 1 <hidden = true>; Assert(CHARA == CHARA_Part2);
 
-	uint64 GEO_COL_A_UNKNOWN0 : 1; // NO_BEHIND proceeds HEIGHT_LIMIT in MGS4; possibly that?
-	uint64 GEO_COL_A_UNKNOWN1 : 1; // BEHIND_THROUGH proceeds NO_BEHIND in MGS4; possibly that?
+	uint64 TARGET_BLOCK : 1;
+	uint64 DOG : 1;
+	uint64 Padding3 : 1 <hidden = true>; Assert(Padding3 == 0);
+	uint64 NO_EFFECT : 1;
 
-	uint64 Padding0 : 6 <hidden = true>; Assert(Padding0 == 0, "Extra GEO_COL_A set. Is this SSD?"); //ssdm_brdg001_brdg001.geom
+	uint64 EVENT_PHYSICS : 1;
+	uint64 NO_WALL_MOVE : 1;
+	uint64 MISSILE2 : 1;
+	uint64 Padding4 : 1 <hidden = true>; Assert(Padding4 == 0);
 
-	uint64 GEO_COL_A_UNKNOWN2 : 1; //
+	uint64 TppReserve1 : 1;
+	uint64 TppReserve2 : 1;
+	uint64 TppReserve3 : 1;
+	uint64 TppReserve4 : 1;
 
-	uint64 Padding1 : 7 <hidden = true>; Assert(Padding1 == 0, "Extra GEO_COL_A set. Is this SSD?"); //ssdm_brdg001_brdg001.geom
+	uint64 Padding5 : 1 <hidden = true>; Assert(Padding5 == 0);
+	uint64 Padding6 : 1 <hidden = true>; Assert(Padding6 == 0);
+	uint64 Padding7 : 1 <hidden = true>; Assert(Padding7 == 0);
+	uint64 Padding8 : 1 <hidden = true>; Assert(Padding8 == 0);
 
-	uint64 GEO_COL_A_MISSILE2 : 1;
-	uint64 GEO_COL_A_RIDE_ON_OUTER : 1;
-	uint64 GEO_COL_A_FLAME : 1;
-	uint64 GEO_COL_A_IGNORE_PHYSICS : 1;`
+	uint64 Sahelan : 1;
+	uint64 RIDE_ON_OUTER : 1;
+	uint64 FLAME : 1;
+	uint64 IGNORE_PHYSICS : 1;
 
-	uint64 GEO_COL_A_CLIMB : 1;
-	uint64 GEO_COL_A_HORSE : 1;
-	uint64 GEO_COL_A_VEHICLE : 1;
-	uint64 GEO_COL_A_MARKER : 1;
+	uint64 CLIMB : 1;
+	uint64 HORSE : 1;
+	uint64 VEHICLE : 1;
+	uint64 MARKER : 1;
 
-	uint64 GEO_COL_A_RIDE_ON : 1;
-	uint64 GEO_COL_A_THROUGH_LINE_OF_FIRE : 1;
-	uint64 GEO_COL_A_THROUGH_ITEM_CHECK : 1;
-	uint64 GEO_COL_A_NO_CREEP : 1;
+	uint64 RIDE_ON : 1;
+	uint64 THROUGH_LINE_OF_FIRE : 1;
+	uint64 THROUGH_ITEM_CHECK : 1;
+	uint64 NO_CREEP : 1;
 
-	uint64 GEO_COL_A_NO_FULTON : 1;
-	uint64 GEO_COL_A_FULTON : 1;
-	uint64 GEO_COL_A_ITEM : 1;
-	uint64 GEO_COL_A_BOSS : 1;
+	uint64 NO_FULTON : 1;
+	uint64 FULTON : 1;
+	uint64 ITEM : 1;
+	uint64 BOSS : 1;
 } GEO_COL_A <bgcolor = COLOR_BG_TAGS, fgcolor = COLOR_FG_TAGS>;
 
 enum <uint> GEO_PRIM_TYPE
 {
-	GEO_PRIM_TYPE_SPHERE = 0,		// Entry size: 0x30 // Sphere not actually confirmed in any way except that it lines up with the others in the exe enum GeoShapeType
-	GEO_PRIM_TYPE_UNKNOWN1 = 1,		// Entry size: 0x30
-	GEO_PRIM_TYPE_QUAD = 2,			// Entry size: 0xA
-	GEO_PRIM_TYPE_BOX = 3,			// Entry size: 0x60
-	GEO_PRIM_TYPE_AABB = 4,			// Entry size: 0x20
-	GEO_PRIM_TYPE_UNKNOWN5 = 5,		// Entry size: 0x80
-	GEO_PRIM_TYPE_UNKNOWN6 = 6,		// Entry size: 0
-	GEO_PRIM_TYPE_UNKNOWN7 = 7,		// Entry size: 0
-	GEO_PRIM_TYPE_PATH = 8,			// Entry size: 0x8
-	GEO_PRIM_TYPE_UNKNOWN9 = 6,		// Entry size: 0
-	GEO_PRIM_TYPE_UNKNOWN10 = 7,	// Entry size: 0
-	GEO_PRIM_TYPE_AREA_PATH = 11,	// Entry size: 0x10
+	GEO_PRIM_TYPE_DOT = 0,			// Multi-entry (zero means only one allowed) size: 0x30
+	GEO_PRIM_TYPE_LINE = 1,			// Multi-entry (zero means only one allowed) size: 0x30
+	GEO_PRIM_TYPE_POLY = 2,			// Multi-entry (zero means only one allowed) size: 0xA
+	GEO_PRIM_TYPE_BOX = 3,			// Multi-entry (zero means only one allowed) size: 0x60
+	GEO_PRIM_TYPE_AABB = 4,			// Multi-entry (zero means only one allowed) size: 0x20
+	GEO_PRIM_TYPE_REFERENCE = 5,	// Multi-entry (zero means only one allowed) size: 0x80
+	GEO_PRIM_TYPE_UNKNOWN6 = 6,		// Multi-entry (zero means only one allowed) size: 0
+	GEO_PRIM_TYPE_PYRAMID = 7,		// Multi-entry (zero means only one allowed) size: 0
+	GEO_PRIM_TYPE_PATH = 8,			// Multi-entry (zero means only one allowed) size: 0x8
+	GEO_PRIM_TYPE_UNKNOWN9 = 9,		// Multi-entry (zero means only one allowed) size: 0
+	GEO_PRIM_TYPE_UNKNOWN10 = 10,	// Multi-entry (zero means only one allowed) size: 0
+	GEO_PRIM_TYPE_FREE_AREA = 11,	// Multi-entry (zero means only one allowed) size: 0x10
 };
 
 typedef enum <uint>
 {
-	GEO_SHAPE_FLAGS_UNKNOWN6 = 0x1,				// Found in TRAP.
-	GEO_SHAPE_FLAGS_UNKNOWN4 = 0x4,				// Found in GPFP.
-	GEO_SHAPE_FLAGS_NO_CHILD = 0x20,			// mgsvtpp.exe!141bdc498 // info & 0x200
-	GEO_SHAPE_FLAGS_UNKNOWN1 = 0x200,			// mgsvtpp.exe!141bdc863, 141bd8041 // info >> 0xd, info & 0x2000
+	GEO_SHAPE_FLAGS_UNKNOWN6 = 0x1,				// Tpp_main_win64.exe!141a3b26d, Found in TRAP.
+	GEO_SHAPE_FLAGS_UNKNOWN9 = 0x2,				// Tpp_main_win64.exe!141a3b26d
+	GEO_SHAPE_FLAGS_UNKNOWN4 = 0x4,				// Tpp_main_win64.exe!141a3b26d, Found in GPFP.
+
+	GEO_SHAPE_FLAGS_IS_INSERTED_CHILD = 0x10,	// Tpp_main_win64.exe!141a3b1bc // info << 8
+	GEO_SHAPE_FLAGS_DISABLED = 0x20,			// mgsvtpp.exe!141bdc498 // info & 0x200
+	GEO_SHAPE_FLAGS_DOUBLE_SIDED = 0x200,		// Tpp_main_win64.exe141a05b40
 	GEO_SHAPE_FLAGS_USE_FMDL_VERTICES = 0x800,	// mgsvtpp.exe!141bd7e30 // info & 0x8000
+	GEO_SHAPE_FLAGS_UNKNOWN10 = 0x1000,			// Tpp_main_win64.exe!141a4b3a2 // info & 0x10000
 	GEO_SHAPE_FLAGS_HAS_CHILD = 0x2000,			// mgsvtpp.exe!141bdc7a7 // info >> 0x11
 	GEO_SHAPE_FLAGS_UNKNOWN7 = 0x4000,			// ????????????????????? // info >> 0x12
-	GEO_SHAPE_FLAGS_UNKNOWN2 = 0x8000,			// mgsvtpp.exe!141bdc830 // info >> 0x13
+	GEO_SHAPE_FLAGS_HAS_REF_MATRIX = 0x8000,	// mgsvtpp.exe!141bdc830, Tpp_main_win64.exe!141a3b26d, 141a45f50 // info >> 0x13, runtime-only, adds 0x40-byte payload
+	GEO_SHAPE_FLAGS_UNKNOWN3 = 0x20000,			// Tpp_main_win64.exe!141a3b26d, Tpp_main_win64.exe!141a4b370 // info >> 0x15, & 0x200000 adds some sort of 0x20-byte payload
 	GEO_SHAPE_FLAGS_UNKNOWN5 = 0x80000,			// Found in GPFP and TRAP. // mgsvtpp.exe!141bdc830
 } GEO_SHAPE_FLAGS <read = ReadGEO_SHAPE_FLAGS>;
 string ReadGEO_SHAPE_FLAGS(GEO_SHAPE_FLAGS flags)
@@ -238,16 +253,14 @@ string ReadGEO_SHAPE_FLAGS(GEO_SHAPE_FLAGS flags)
 
 struct GeoGeomHeader
 {
-	GEO_PRIM_TYPE Type : 4 <bgcolor=0x0080ff>;
+	GEO_PRIM_TYPE Type : 4 <bgcolor = 0x0080ff>;
 
-	GEO_SHAPE_FLAGS Flags : 20 <bgcolor=0x0080ff>; Assert((Flags & ~(GEO_SHAPE_FLAGS_UNKNOWN1 | GEO_SHAPE_FLAGS_UNKNOWN7 | GEO_SHAPE_FLAGS_HAS_CHILD | GEO_SHAPE_FLAGS_USE_FMDL_VERTICES)) == 0); // mgsvtpp.exe!141bdc492
-	//Assert(((Flags & GEO_SHAPE_FLAGS_UNKNOWN1) != 0) == ((Flags & GEO_SHAPE_FLAGS_UNKNOWN7) != 0));
-	if ((Flags & GEO_SHAPE_FLAGS_UNKNOWN1) != 0)
-		Printf("GeoGeomHeader with GEO_SHAPE_FLAGS_UNKNOWN1 & 7 at %Lu.\n", startof(this));
-	// if ((Flags & GEO_SHAPE_FLAGS_UNKNOWN7) != 0)
-	// 	Printf("GeoGeomHeader with GEO_SHAPE_FLAGS_UNKNOWN7 at %Lu.\n", startof(this));
+	GEO_SHAPE_FLAGS Flags : 20 <bgcolor = 0x0080ff>; Assert((Flags & ~(GEO_SHAPE_FLAGS_DOUBLE_SIDED | GEO_SHAPE_FLAGS_UNKNOWN7 | GEO_SHAPE_FLAGS_HAS_CHILD | GEO_SHAPE_FLAGS_USE_FMDL_VERTICES)) == 0); // mgsvtpp.exe!141bdc492
+	//Assert(((Flags & GEO_SHAPE_FLAGS_DOUBLE_SIDED) != 0) == ((Flags & GEO_SHAPE_FLAGS_UNKNOWN7) != 0));
+	if ((Flags & GEO_SHAPE_FLAGS_UNKNOWN7) != 0)
+		Printf("GeoGeomHeader with GEO_SHAPE_FLAGS_UNKNOWN7 at %Lu.\n", startof(this));
 
-	uint PrimCount : 8 <bgcolor=0x0080ff>;
+	uint PrimCount : 8 <bgcolor = 0x0080ff>;
 
 	// Each of these offsets are in terms of the number of lines, so scale them by 16, aka shift by 4 bits.
 	// To check if the VertexBufferOffset goes anywhere, it checks if (VertexBufferOffset & 0x0fffffff) == 0.
@@ -272,11 +285,11 @@ struct GeoGeomHeader
 
 struct GeoPathGeomHeader
 {
-	GEO_PRIM_TYPE Type : 4 <bgcolor=0x0080ff>;
+	GEO_PRIM_TYPE Type : 4 <bgcolor = 0x0080ff>;
 
-	GEO_SHAPE_FLAGS Flags : 20 <bgcolor=0x0080ff>; Assert(Flags == (GEO_SHAPE_FLAGS_UNKNOWN4 | GEO_SHAPE_FLAGS_UNKNOWN5));
+	GEO_SHAPE_FLAGS Flags : 20 <bgcolor = 0x0080ff>; Assert(Flags == (GEO_SHAPE_FLAGS_UNKNOWN4 | GEO_SHAPE_FLAGS_UNKNOWN5));
 
-	uint PrimCount : 8 <bgcolor=0x0080ff>;
+	uint PrimCount : 8 <bgcolor = 0x0080ff>;
 
 	// Each of these offsets are in terms of the number of lines, so scale them by 16, aka shift by 4 bits.
 	// To check if the VertexBufferOffset goes anywhere, it checks if (VertexBufferOffset & 0x0fffffff) == 0.
@@ -298,11 +311,11 @@ struct GeoPathGeomHeader
 
 struct GeoTrapGeomHeader
 {
-	GEO_PRIM_TYPE Type : 4 <bgcolor=0x0080ff>;
+	GEO_PRIM_TYPE Type : 4 <bgcolor = 0x0080ff>;
 
-	GEO_SHAPE_FLAGS Flags : 20 <bgcolor=0x0080ff>; Assert(Flags == (GEO_SHAPE_FLAGS_UNKNOWN5 | GEO_SHAPE_FLAGS_UNKNOWN6));
+	GEO_SHAPE_FLAGS Flags : 20 <bgcolor = 0x0080ff>; Assert(Flags == (GEO_SHAPE_FLAGS_UNKNOWN5 | GEO_SHAPE_FLAGS_UNKNOWN6));
 
-	uint PrimCount : 8 <bgcolor=0x0080ff>;
+	uint PrimCount : 8 <bgcolor = 0x0080ff>;
 
 	// Each of these offsets are in terms of the number of lines, so scale them by 16, aka shift by 4 bits.
 	// To check if the VertexBufferOffset goes anywhere, it checks if (VertexBufferOffset & 0x0fffffff) == 0.
@@ -339,7 +352,7 @@ typedef struct
 		byte AuxMaterialIndex : 7 <read = ( (byte)((0x80 & ((byte)this << 1)) | this) )>;
 		BitfieldEnablePadding();
 	} Info;
-} GeoPrimQuad <read = Str("%d, %d, %d, %d", this.IndexA, this.IndexB, this.IndexC, this.IndexD)>; // Name taken from PES RTTI
+} GeoPrimPoly <read = Str("%d, %d, %d, %d", this.IndexA, this.IndexB, this.IndexC, this.IndexD)>; // Name taken from PES RTTI
 
 typedef struct
 {
@@ -353,8 +366,8 @@ typedef struct
 
 typedef struct
 {
-	WideVector3 BoundingBoxRadii <bgcolor=0xDBC48F, comment="Width/2, Height/2, Depth/2">;
-	WideVector3 BoundingBoxCenter <bgcolor=0xDBC48F>;
+	Vector3W BoundingBoxRadii <bgcolor = 0xDBC48F, comment="Width/2, Height/2, Depth/2">;
+	Vector3W BoundingBoxCenter <bgcolor = 0xDBC48F>;
 } GeoPrimAabb; // Name taken from PES RTTI
 
 typedef struct
@@ -373,8 +386,8 @@ typedef struct
 
 	// FSeek(startof(this) + VertexDataOffset);
 	
-	// WideVector3 Vertices[VertexCount] <optimize = true>;
-} GeoPrimAreaPath;
+	// Vector3W Vertices[VertexCount] <optimize = true>;
+} GeoPrimFreeArea;
 
 struct GeoVertexHeader // Name taken from PES RTTI
 {

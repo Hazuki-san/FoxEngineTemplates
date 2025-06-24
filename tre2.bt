@@ -26,44 +26,44 @@ typedef struct
 			struct
 			{
 				float data[maxLodLevel];
-			} LodParam[clusterWidth * clusterHeight];
-		} Param <bgcolor=0x00aaff>;
+			} LodParam[clusterWidth * clusterHeight] <optimize = true>;
+		} Param <bgcolor = 0x00aaff>;
 		break;
 	case "maxHeight":
 		struct
 		{
 			float data[dataSize / sizeof(float)];
-		} MaxHeight <bgcolor=0xff00aa>;
+		} MaxHeight <bgcolor = 0xff00aa>;
 		break;
 	case "minHeight":
 		struct
 		{
 			float data[dataSize / sizeof(float)];
-		} MinHeight <bgcolor=0xaaff00>;
+		} MinHeight <bgcolor = 0xaaff00>;
 		break;
 	case "heightMap":
 		struct
 		{
 			float data[dataSize / sizeof(float)];
-		} HeightMap <bgcolor=0x99aacc>;
+		} HeightMap <bgcolor = 0x99aacc>;
 		break;
 	case "comboTexture":
 		struct
 		{
 			Pixel data[dataSize / sizeof(Pixel)];
-		} ComboTexture <bgcolor=0x111199>;
+		} ComboTexture <bgcolor = 0x111199>;
 		break;
 	case "materialIds":
 		struct
 		{
 			Pixel data[dataSize / sizeof(Pixel)];
-		} MaterialIds <bgcolor=0x991111>;
+		} MaterialIds <bgcolor = 0x991111>;
 		break;
 	case "configrationIds":
 		struct
 		{
 			uint data[dataSize / sizeof(uint)];
-		} ConfigrationIds <bgcolor=0x119911>;
+		} ConfigrationIds <bgcolor = 0x119911>;
 		break;
 	case "layoutDescription":
 		struct
@@ -74,7 +74,7 @@ typedef struct
 			uint TotalGridWidth;
 			uint TotalGridHeight;
 
-			uint CommonDescriptionOffset <hidden = true>;
+			uint PatchOffset <hidden = true>;
 
 			float MaxHeightWS;
 			float MinHeightWS;
@@ -84,12 +84,12 @@ typedef struct
 
 			FAlign(16);
 
-			FSeek(startof(this) + 0x18 + CommonDescriptionOffset);
+			FSeek(startof(this) + 0x18 + PatchOffset);
 
-			TerrainCommonDescription CommonDescription;
+			_Patch Patch;
 
 			FAlign(16);
-		} LayoutDescription <bgcolor=0x999900>;
+		} BaseLayoutDescription <bgcolor = 0x999900>;
 		break;
 	default:
 		Assert(false, "Unknown node");

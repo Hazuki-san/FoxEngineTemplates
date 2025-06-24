@@ -1,0 +1,103 @@
+//first intparam
+struct Header{
+    short version;
+    enum <short> Flags {
+        DISABLE=0x1,
+        SKIP=0x2,
+        MULTIGROUP=0x4,
+        INTERPOLATE=0x8,
+        UNKNOWN5=0x10
+    } flags;
+} header;
+
+//second intparam
+struct ParamGroupsInfo{
+    short intIndexToEventParamCount;
+    short eventParamGroupCount;
+} paramGroupsInfo;
+
+//2.5th intparams
+if ( header.flags & SKIP )
+{
+    struct TimeSection{
+        int startFrame;
+        int endFrame;
+    } timeSection;
+};
+
+//third intparam(s)
+FSeek(paramGroupsInfo.intIndexToEventParamCount*4);
+struct ParamGroupInfo{
+    short intIndexToIntValues;
+    ubyte paramCount;
+    ubyte isInterpolate;
+} paramGroupInfo[paramGroupsInfo.eventParamGroupCount];
+
+//event param definitions
+local int paramGroupIndex;
+local int paramIndex;
+for (paramGroupIndex = 0; paramGroupIndex < paramGroupsInfo.eventParamGroupCount; paramGroupIndex++)
+{
+    FSeek((paramGroupInfo[paramGroupIndex].intIndexToIntValues*4));
+    struct ParamGroup
+    {
+        for (paramIndex = 0; paramIndex < paramGroupInfo[paramGroupIndex].paramCount; paramIndex++)
+        {
+            FSeek(paramGroupInfo[paramGroupIndex].intIndexToIntValues*4+paramIndex*8);
+            struct Param{
+                short valueIndex;
+                enum <ubyte> PropertyType {
+                    Int8 = 0,
+                    UInt8 = 1,
+                    Int16 = 2,
+                    UInt16 = 3,
+                    Int32 = 4,
+                    UInt32 = 5,
+                    Int64 = 6,
+                    UInt64 = 7,
+                    Float = 8,
+                    Double = 9,
+                    Bool = 10,
+                    String = 11,
+                    Path = 12,
+                    EntityPtr = 13,
+                    Vector3 = 14,
+                    Vector4 = 15,
+                    Quat = 16,
+                    Matrix3 = 17,
+                    Matrix4 = 18,
+                    Color = 19,
+                    FilePtr = 20,
+                    EntityHandle = 21,
+                    EntityLink = 22,
+                    PropertyInfo = 23,
+                    WideVector3 = 24
+                } paramType;
+                ubyte flag;//?
+                uint paramName;
+            } param;    
+        }
+    } paramGroup;
+}
+
+//integer values
+for (paramGroupIndex = 0; paramGroupIndex < paramGroupsInfo.eventParamGroupCount; paramGroupIndex++)
+{
+    for (paramIndex = paramGroupInfo[paramGroupIndex].paramCount; paramIndex-- > 0; paramIndex)
+    {
+        switch(paramGroup[paramGroupIndex].param[paramIndex].paramType)
+        {
+            case Int8:
+            case UInt8:
+            case Int16:
+            case UInt16:
+            case Int32:
+            case UInt32:
+            case Bool:
+                uint value;
+                break;
+            default:
+                break;
+        };
+    }
+}

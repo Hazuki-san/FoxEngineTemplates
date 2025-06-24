@@ -240,9 +240,9 @@ local int disableTrackData = false;
 
 typedef struct
 {
-	uint ChannelCount;
+	uint UnitCount;
 
-	uint TrackCount;
+	uint SegmentCount;
 	
 	ushort HeaderIndex; // Used in SAND. In GANI, 0 for FK, 1 for IK
 
@@ -252,12 +252,13 @@ typedef struct
 
 	uint FrameCount;
 
-	uint Unknown1;
+	uint TimeBase;
 
-	uint UnitOffsets[ChannelCount] <hidden = true>;
+	uint UnitOffsets[UnitCount] <hidden = true>;
 
 	local uint trkIdx;
-	for (trkIdx = 0; trkIdx < ChannelCount; trkIdx++)
+    local uint sgmIdx;
+	for (trkIdx = 0; trkIdx < UnitCount; trkIdx++)
 	{
 		FSeek(startof(this) + UnitOffsets[trkIdx]);
 
@@ -271,11 +272,23 @@ typedef struct
 				SCALE           = 2236677358,
 				TRANSLATE       = 2739596730,
 				COLOR           = 1662570759,
+                
+                //IK
+                RIG_ROOT        = 3552837520,
+
+				// MTAR
+				TensionController = 2275904709,
+				TensionShift = 2003538961,
+				TensionRate = 853304191,
 
 				// 
 			} Name;
+            if (HeaderIndex==1)
+            {
+                Printf("%u\n",Name);
+            }
 
-			ubyte SegmentCount;
+			ubyte SegmentCount; sgmIdx = sgmIdx + SegmentCount;
 
 			TrackUnitFlags Flags;
 
@@ -327,7 +340,7 @@ typedef struct
 		vo = 1455888052,
 	} CategoryName;
 
-	ushort UnitCount <hidden = true>;
+	short UnitCount <hidden = true>;
 
 	ushort ExtraSectionOffset;
 
@@ -364,7 +377,20 @@ typedef struct
                 
                 // Demo
                 ExecCommand = 595181585,
+                DemoStart = 3541589503,
+                DemoEnd = 3534133658,
+                CreateLocator = 2523762371,
+                CreateModel = 3313525351,
+                VisibleModel = 1040836537,
+                VisibleMesh = 1799953944,
+                DeleteLocator = 826863926,
+                DeleteModel = 1968729831,
+                CreateCamera = 2135789169,
+                DeleteCamera = 4099945744,
+                ClipEnd = 708232468,
 			} EventName;
+            
+            //Printf(Str("%u\n",EventName));
 
 			byte TimeSectionCount : 6 <hidden = true>;
 			enum <byte> TIME_SECTION_FORMAT
@@ -454,9 +480,20 @@ typedef struct
                     Printf(Str("target: %I64u mesh group: %I64u\n",StringParams[0].param.hash,StringParams[1].param.hash));
                 }*/
                 //prp_ hash dump
-                if (EventName==2523762371)
+                /*if (EventName==2523762371)
                 {
                     Printf(Str("%I64u\n",StringParams[0].param.hash));
+                }*/
+                if (EventName==595181585)
+                {
+                    if (StringParamCount>6)
+                    {
+                        if (StringParams[5].param.hash==84993817083062) 
+                        {
+                            local float divisor = 0.6*1000/1001;
+                            Printf(Str("%f,%I64u\n",TimeSections[0].StartFrame/divisor,StringParams[1].param.hash));
+                        }
+                    }
                 }
             }
 		} Event <read = EnumToString(EventName)>;
@@ -493,7 +530,9 @@ typedef struct
 {
 	uint Version <hidden = true>;
 
-	uint Count <hidden = true>;
+	short Count <hidden = true>;
+
+	ushort Unknown; Assert(Unknown == 0);
 
 	uint EntryOffsets[Count] <hidden = true>;
 
@@ -504,7 +543,18 @@ typedef struct
 
 		EvpData Data;
 	}
-} EvpGroup <bgcolor = 0x00C000>;
+} EvpHeader <bgcolor = 0x00C000>;
+
+struct FoxDataString;
+struct StringList
+{
+	uint EntryCount <hidden = true>;
+	local int64 strIdx;
+	for (strIdx = 0; strIdx < EntryCount; strIdx++)
+	{
+		FoxDataString Entry <optimize = true>;
+	}
+};
 
 
 typedef enum <ubyte>

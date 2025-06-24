@@ -1,0 +1,256 @@
+#include "common/common.bt"
+
+#define C_HEADER 0x527f4b
+#define C_ROOT 0x81d17d
+#define C_UNIT 0xF7BEC3
+#define C_SUBENTRY 0xFF4F8A
+#define C_FOOTER 0xbce896
+
+typedef struct
+{
+    uint Offset;
+} AnimParamBinaryString <read = Str("%Lx @ %Lx", ReadUInt64(startof(Offset) + Offset), startof(Offset) + Offset), bgcolor = C_ROOT>;
+
+/*
+typedef struct
+{
+    PathCode64 Path;
+} AnimParamBinaryPath <read = (Path.hash), bgcolor = C_UNIT>;
+*/
+
+struct MotionGraphFormatHeader
+{
+    char Signature[15] <hidden = true>;
+    byte PaddingA <hidden = true>;
+    
+    uint UnknownA;
+    uint UnknownB;
+    
+    ubyte TotalAnimLayerCount;
+
+    ubyte UnknownD;
+    ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+
+    uint GraphCount;
+
+    uint GraphHeadersOffset;
+
+    uint DefaultAnimParamsCount;
+
+    uint DefaultAnimParamsOffset;
+
+    uint ParamsRelated;
+
+    uint ParamsOffset;
+} Header <bgcolor = C_HEADER>;
+
+FSeek(0x20 + Header.GraphHeadersOffset);
+
+enum <byte> MOTIONGRAPH_BLEND_NODE_TYPE
+{
+	MOTIONGRAPH_BLEND_NODE_TYPE_SINGLE = 0,
+	MOTIONGRAPH_BLEND_NODE_TYPE_TWO = 1,
+	MOTIONGRAPH_BLEND_NODE_TYPE_LAYERS = 2,
+	MOTIONGRAPH_BLEND_NODE_TYPE_CUSTOM = 3,
+	MOTIONGRAPH_BLEND_NODE_TYPE_SELECT = 4,
+	MOTIONGRAPH_BLEND_NODE_TYPE_STRING_SELECT = 5,
+	MOTIONGRAPH_BLEND_NODE_TYPE_ADD = 6,
+	MOTIONGRAPH_BLEND_NODE_TYPE_SUBTRACT = 7,
+	MOTIONGRAPH_BLEND_NODE_TYPE_SINGLE2 = 9, // Unknown
+};
+
+local long rewindPos = 0;
+local long rewindPos2 = 0;
+local long rewindPos3 = 0;
+local int i = 0;
+for (i = 0; i < Header.GraphCount; i++)
+{
+    struct TEMP_MotionGraphFormatGraphHeader
+    {
+        local long SelfPos = startof(this);
+
+        AnimParamBinaryString MaskName;
+
+        ubyte AnimLayerCount;
+        ubyte MemPaddingA <hidden = true>; Assert(MemPaddingA == 0xA7);
+        ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+
+        uint StateNodeCount;
+        uint StateNodesOffset;
+
+        rewindPos = FTell();
+        FSeek(startof(StateNodesOffset) + StateNodesOffset);
+        struct MotionGraphFormatNode
+        {
+            uint UnkAdjCount;
+            int UnkAdjOffset;
+
+            uint Maybe_ConnectNodeCount;
+
+            int BlendNodesOffset;
+            if (BlendNodesOffset != 0)
+            {
+                rewindPos2 = FTell();
+                FSeek(startof(BlendNodesOffset) + BlendNodesOffset);
+                struct MotionGraphFormatBlendNode
+                {
+                    MOTIONGRAPH_BLEND_NODE_TYPE Type; Assert(Type >= 0 && Type <= 9 && Type != 8);
+                    ubyte UnknownA;
+
+                    ubyte Flags;
+                    ubyte UnknownB;
+
+                    uint DataOffsetProbably;
+
+                    uint LinkDescCount;
+                    uint LinkDescsOffset;
+                    if (LinkDescCount != 0)
+                    {
+                        rewindPos3 = FTell();
+                        FSeek(startof(LinkDescsOffset) + LinkDescsOffset);
+                        struct MotionGraphFormatBlendNodeLinkDesc
+                        {
+                            ubyte Index;
+                            ubyte MemPaddingA <hidden = true>; Assert(MemPaddingA == 0xA7);
+                            ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+
+                            AnimParamBinaryString Tag;
+                        } LinkDesc[LinkDescCount] <optimize = false, bgcolor = C_UNIT>;
+                        FSeek(rewindPos3);
+                    }
+
+                    uint UnknownE;
+                    uint UnknownF;
+                    uint UnknownG;
+                    uint UnknownH;
+                    
+                    float UnknownI;
+                    int UnknownJOffset;
+                    
+                    byte UnknownK;
+
+                    ubyte MemPaddingA <hidden = true>; Assert(MemPaddingA == 0xA7);
+                    ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+                } BlendNode <bgcolor = C_FOOTER>;
+                FSeek(rewindPos2);
+            }
+
+            ushort UnknownC;
+
+            ushort UnknownD;
+
+            byte Type;
+
+            ubyte MemPaddingA <hidden = true>; Assert(MemPaddingA == 0xA7);
+            ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+
+            AnimParamBinaryString Tag;
+
+            uint UnknownF;
+
+            int UnknownOffsetG;
+
+            uint UnknownH;
+
+            int UnknownOffsetI;
+
+            uint UnknownJ;
+
+            int UnknownOffsetK;
+
+            uint UnknownL;
+
+            int UnknownOffsetM;
+
+            uint UnknownN;
+
+            int UnknownOffsetO;
+
+            AnimParamBinaryString UnknownStringP;
+        } StateNodes[StateNodeCount] <optimize = false, bgcolor = C_SUBENTRY>;
+        FSeek(rewindPos);
+
+        uint UnknownA;
+        uint UnknownB;
+        uint UnknownC;
+        uint UnknownD;
+        uint UnknownE;
+        uint UnknownF;
+
+        uint ValueControlsOffset;
+        rewindPos = FTell();
+        FSeek(startof(ValueControlsOffset) + ValueControlsOffset);
+        struct MotionGraphFormatValueControls
+        {
+            uint Count <hidden = true>;
+            int Offset <hidden = true>;
+
+            FSeek(startof(Offset) + Offset);
+
+            struct MotionGraphFormatValueControl
+            {
+                uint A;
+                byte B;
+
+                ubyte MemPaddingA <hidden = true>; Assert(MemPaddingA == 0xA7);
+                ushort MemPaddingB <hidden = true>; Assert(MemPaddingB == 0xA7A7);
+            } Controls[Count] <optimize = false>;
+        } ValueControls <bgcolor = C_UNIT>;
+        FSeek(rewindPos);
+
+        uint UnknownH;
+        uint UnknownI;
+        
+        uint AnimLayerInfosOffset;
+        rewindPos = FTell();
+        FSeek(startof(AnimLayerInfosOffset) + AnimLayerInfosOffset);
+        struct MotionGraphFormatAnimLayerInfo
+        {
+            byte LayerControlDescMaxDatas;
+            byte LayerControlDescMaxNodes; // + 1
+        } AnimLayerInfo[AnimLayerCount] <optimize = false, bgcolor = C_UNIT>;
+        FSeek(rewindPos);
+    } GraphHeader <bgcolor = C_ROOT>;
+}
+
+typedef struct
+{
+    uint NextParamOffset;
+    StrCode32 Name;
+    uint Count;
+    uint DataOffset;
+
+    FSeek(startof(DataOffset) + DataOffset);
+    switch (Name.hash)
+    {
+    case 2241582398:
+        AnimParamBinaryString Strings[Count];
+        break;
+    case 408861599:
+        struct PlacementStaticTree(uint tagCount)
+        {
+            StrCode Tag[tagCount];
+        } TagMap(Count) <bgcolor = C_UNIT>;
+        break;
+    }
+} GUESS_AnimParamBinary <bgcolor = C_HEADER>;
+
+if (Header.ParamsOffset != 0)
+{
+    FSeek(startof(Header.ParamsOffset) + Header.ParamsOffset);
+
+    GUESS_AnimParamBinary Param;
+    if (Param.NextParamOffset != 0)
+	{
+		local long paramStartPos = startof(Param) + Param.NextParamOffset;
+		
+		do
+		{
+			FSeek(paramStartPos);
+
+			GUESS_AnimParamBinary Param;
+
+			paramStartPos += Param.NextParamOffset;
+		} while (Param.NextParamOffset != 0);
+	}
+}
