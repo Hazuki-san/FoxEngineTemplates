@@ -81,6 +81,16 @@ typedef struct
 	ushort Z_Sign : 1;
 } QuatAnim15;
 
+typedef struct
+{
+	uint Theta : 20;
+	uint Y : 20;
+	uint Z : 20;
+	uint X_Sign : 1;
+	uint Y_Sign : 1;
+	uint Z_Sign : 1;
+} QuatAnim20;
+
 struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 {
 	switch (type)
@@ -97,7 +107,11 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 			case 15:
 				QuatAnim15 Value;
 				break;
+            case 20:
+				QuatAnim20 Value;
+				break;
 			default:
+                Printf("TRACK_TYPE_QUAT: Unknown component bit size: %u\n", componentBitSize);
 				Assert(false);
 				break;
 			}
@@ -112,6 +126,7 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 				float Value;
 				break;
 			default:
+                Printf("TRACK_TYPE_FLOAT: Unknown component bit size: %u\n", componentBitSize);
 				Assert(false);
 				break;
 			}
@@ -128,6 +143,7 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 				Vector3 Value;
 				break;
 			default:
+                Printf("TRACK_TYPE_VECTOR3: Unknown component bit size: %u\n", componentBitSize);
 				Assert(false);
 				break;
 			}
@@ -142,6 +158,7 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 				Vector4 Value;
 				break;
 			default:
+                Printf("TRACK_TYPE_VECTOR4: Unknown component bit size: %u\n", componentBitSize);
 				Assert(false);
 				break;
 			}
@@ -155,7 +172,11 @@ struct AnimKeyframeData(TrackType type, ubyte componentBitSize)
 			case 15:
 				QuatAnim15 Value;
 				break;
+            case 20:
+				QuatAnim20 Value;
+				break;
 			default:
+                Printf("TRACK_TYPE_QUAT_DIFF: Unknown component bit size: %u\n", componentBitSize);
 				Assert(false);
 				break;
 			}
@@ -272,9 +293,9 @@ typedef struct
 				SCALE           = 2236677358,
 				TRANSLATE       = 2739596730,
 				COLOR           = 1662570759,
-                
-                		//IK
-                		RIG_ROOT        = 3552837520,
+
+				//IK
+				RIG_ROOT        = 3552837520,
 
 				// MTAR
 				TensionController = 2275904709,
@@ -283,21 +304,42 @@ typedef struct
 
 				// PES
 				RIG_sk_root_hip = 968645950,
-		                RIG_dsk_hip = 3916153946,
-		                RIG_sk_thigh_l = 3373748779,
-		                RIG_sk_leg_l = 1585974686,
-		                RIG_sk_foot_l = 1612745210,
-		                RIG_sk_thigh_r = 2162694421,
-		                RIG_sk_leg_r = 2210302700,
-		                RIG_sk_foot_r = 1369424113,
-		                RIG_sk_belly = 3670138851,
-		                RIG_sk_chest = 2530987309,
-		                RIG_sk_neck = 3202087828,
-		                RIG_sk_head = 3889042814,
-		                RIG_sk_shoulder_l = 2593259726,
-		                RIG_sk_hand_l = 1611425788,
-		                RIG_sk_shoulder_r = 3310741819,
-		                RIG_sk_hand_r = 2750251121,
+				RIG_dsk_hip = 3916153946,
+				RIG_sk_thigh_l = 3373748779,
+				RIG_sk_leg_l = 1585974686,
+				RIG_sk_foot_l = 1612745210,
+				RIG_sk_thigh_r = 2162694421,
+				RIG_sk_leg_r = 2210302700,
+				RIG_sk_foot_r = 1369424113,
+				RIG_sk_belly = 3670138851,
+				RIG_sk_chest = 2530987309,
+				RIG_sk_neck = 3202087828,
+				RIG_sk_head = 3889042814,
+				RIG_sk_shoulder_l = 2593259726,
+				RIG_sk_hand_l = 1611425788,
+				RIG_sk_shoulder_r = 3310741819,
+				RIG_sk_hand_r = 2750251121,
+				RIG_skh_hand_l = 3933795511,
+				RIG_skh_thumb_mata_l = 2091831255,
+				RIG_skh_thumb_mcp_l = 815626292,
+				RIG_skh_thumb_pip_l = 1441918602,
+				RIG_skh_index_mata_l = 2153785592,
+				RIG_skh_index_mcp_l = 1304517297,
+				RIG_skh_index_pip_l = 1414195937,
+				RIG_skh_index_dip_l = 851794009,
+				RIG_skh_middle_mata_l = 630988130,
+				RIG_skh_middle_mcp_l = 2822705372,
+				RIG_skh_middle_pip_l = 939001014,
+				RIG_skh_middle_dip_l = 2914667619,
+				RIG_skh_pinky_mata_l = 375091319,
+				RIG_skh_pinky_mcp_l = 822337554,
+				RIG_skh_pinky_pip_l = 2554073114,
+				RIG_skh_pinky_dip_l = 1125113340,
+				RIG_skh_ring_mata_l = 3660677765,
+				RIG_skh_ring_mcp_l = 2670278435,
+				RIG_skh_ring_pip_l = 640218434,
+				RIG_skh_ring_dip_l = 2471171951
+
 			} Name;
             if (HeaderIndex==1)
             {
